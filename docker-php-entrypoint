@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# 發生錯誤時終止 Script
+set -e
+
+# 避免缺少資料夾
+# 通常 storage 會從外部掛載
+mkdir -p $APP_ROOT/storage/app
+mkdir -p $APP_ROOT/storage/app/public
+mkdir -p $APP_ROOT/storage/framework
+mkdir -p $APP_ROOT/storage/framework/cache
+mkdir -p $APP_ROOT/storage/framework/cache/data
+mkdir -p $APP_ROOT/storage/framework/sessions
+mkdir -p $APP_ROOT/storage/framework/testing
+mkdir -p $APP_ROOT/storage/framework/views
+mkdir -p $APP_ROOT/storage/logs
+
+php artisan storage:link
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# 記得調整 Laravel 會寫入到的資料夾權限
+chown -R www-data $APP_ROOT/storage $APP_ROOT/bootstrap/cache
+
+# 方便使用 artisan 指令
+if [ "$1" != "apache2-foreground" ] && [ "$1" != "bash" ] && [ "$1" != "sh" ]; then
+  set -- php artisan "$@"
+fi
+
+exec "$@"

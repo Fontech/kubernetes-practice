@@ -1,0 +1,9 @@
+# 加速打包
+/vendor
+
+# 留給 Image 一個乾淨的環境
+/storage
+/bootstrap/cache
+
+# 這行很重要，避免 php artisan storage:link 失敗
+/public/storage
